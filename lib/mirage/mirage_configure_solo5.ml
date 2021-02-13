@@ -73,12 +73,14 @@ let solo5_platform_pkg = function
 
 let cflags pkg = pkg_config pkg [ "--cflags" ]
 
+let cc = Option.value (Sys.getenv_opt "CC") ~default:"cc"
+
 let compile_manifest target =
   let bindings = solo5_bindings_pkg target in
   let c = "_build/manifest.c" in
   let obj = "_build/manifest.o" in
   cflags bindings >>= fun cflags ->
-  let cmd = Bos.Cmd.(v "cc" %% of_list cflags % "-c" % c % "-o" % obj) in
+  let cmd = Bos.Cmd.(v cc %% of_list cflags % "-c" % c % "-o" % obj) in
   Log.info (fun m -> m "executing %a" Bos.Cmd.pp cmd);
   Action.run_cmd cmd
 
